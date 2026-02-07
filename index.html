@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>For Edu ❤️</title>
 <style>
 /* Reset & body */
 * {box-sizing:border-box;}
-body {margin:0;font-family:'Segoe UI',sans-serif;text-align:center;overflow-x:hidden;
-background:linear-gradient(120deg,#ff758c,#ff7eb3);display:flex;flex-direction:column;align-items:center;}
+body {
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  text-align:center;
+  overflow-x:hidden;
+  background:linear-gradient(120deg,#ff758c,#ff7eb3);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  -webkit-tap-highlight-color: transparent; /* removes tap highlight on mobile */
+  touch-action: manipulation; /* disables double-tap zoom */
+}
 
 /* Heading */
 h1 {
@@ -52,19 +62,27 @@ h1 {
   position:absolute;
   bottom:2%;
   left:40%;
-  transition:left 0.1s;
+  transition:left 0.05s linear; /* smoother for long press */
 }
 
 /* Tap Buttons */
 #controls {
   display:flex;
   justify-content:center;
-  gap:20px;
-  margin-bottom:10px;
+  gap:30px;
+  margin-bottom:15px;
 }
 #controls button {
-  font-size:5vw;
-  padding:10px 20px;
+  font-size:7vw;       /* bigger buttons */
+  padding:15px 25px;   /* bigger touch area */
+  border-radius:25px;
+  background:#ff4d6d;
+  border:none;
+  color:white;
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action: manipulation;
 }
 
 /* Falling hearts */
@@ -95,15 +113,6 @@ h1 {
 @keyframes pop {
   0%{transform:scale(.5);opacity:0}
   100%{transform:scale(1);opacity:1}
-}
-
-/* Buttons */
-button {
-  background:#ff4d6d;
-  border:none;
-  border-radius:20px;
-  color:white;
-  cursor:pointer;
 }
 
 /* Images */
@@ -138,8 +147,8 @@ iframe {width:100%;height:200px;border-radius:15px;}
 
 <!-- Tap Buttons for Mobile -->
 <div id="controls">
-  <button onclick="moveLeft()">⬅️</button>
-  <button onclick="moveRight()">➡️</button>
+  <button id="leftBtn">⬅️</button>
+  <button id="rightBtn">➡️</button>
 </div>
 
 <div id="popup"><div id="popupContent"></div></div>
@@ -167,18 +176,35 @@ const rewards={
 30:finalProposal
 };
 
-// Player movement - Mobile tap buttons
-function moveLeft() {
-  leftPercent -= 5;
-  if(leftPercent < 0) leftPercent = 0;
-  player.style.left = leftPercent + "%";
+// Long press movement
+let moveInterval = null;
+function startMove(direction){
+  stopMove();
+  moveInterval = setInterval(()=>{
+    if(direction==="left"){
+      leftPercent -= 1;
+      if(leftPercent<0) leftPercent=0;
+    } else if(direction==="right"){
+      leftPercent +=1;
+      if(leftPercent>80) leftPercent=80;
+    }
+    player.style.left = leftPercent + "%";
+  },15); // smooth continuous move
+}
+function stopMove(){
+  if(moveInterval) clearInterval(moveInterval);
 }
 
-function moveRight() {
-  leftPercent += 5;
-  if(leftPercent > 80) leftPercent = 80;
-  player.style.left = leftPercent + "%";
-}
+// Buttons event listeners
+document.getElementById("leftBtn").addEventListener("touchstart",()=>startMove("left"));
+document.getElementById("leftBtn").addEventListener("touchend",stopMove);
+document.getElementById("leftBtn").addEventListener("mousedown",()=>startMove("left"));
+document.getElementById("leftBtn").addEventListener("mouseup",stopMove);
+
+document.getElementById("rightBtn").addEventListener("touchstart",()=>startMove("right"));
+document.getElementById("rightBtn").addEventListener("touchend",stopMove);
+document.getElementById("rightBtn").addEventListener("mousedown",()=>startMove("right"));
+document.getElementById("rightBtn").addEventListener("mouseup",stopMove);
 
 // Falling hearts
 function createHeart(){
