@@ -56,6 +56,27 @@ const rewards={
 };
 
 // Movement
+let touchStartX = 0;
+
+game.addEventListener("touchstart", e => {
+  touchStartX = e.touches[0].clientX;
+});
+
+game.addEventListener("touchend", e => {
+  let touchEndX = e.changedTouches[0].clientX;
+  let diff = touchEndX - touchStartX;
+
+  if (diff > 20) { // swipe right
+    leftPercent += 5;
+    if (leftPercent > 80) leftPercent = 80;
+  } else if (diff < -20) { // swipe left
+    leftPercent -= 5;
+    if (leftPercent < 0) leftPercent = 0;
+  }
+
+  player.style.left = leftPercent + "%";
+});
+
 document.addEventListener("keydown",e=>{
 if(e.key==="ArrowLeft"&&x>0)x-=25;
 if(e.key==="ArrowRight"&&x<270)x+=25;
@@ -114,7 +135,7 @@ showPopup(`<h3>Bobbin Head Memories 🚤</h3>
 <img id="slide" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">`);
 let imgs=[
 "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-"https://photos.google.com/share/AF1QipM1MEWQcfimxhPCHYxjyeY4pl1AlFBXOqsfn97BhriV4pdeV2slF8vppvz3HHPkVA/photo/AF1QipPmWIYnZoS3DL9amylMesTD5I90rYHKxAUhMRUH?key=UHpSODJzeUcwS1dLUEx1WUpEdnpfendwdk5zNXJ3",
+"https://photos.app.goo.gl/FzGpzTBXQut36WS79",
 "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
 ];
 let i=0;
