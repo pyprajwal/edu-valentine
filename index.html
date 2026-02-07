@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Edu ❤️</title>
+<style>
+body {margin:0;font-family:'Segoe UI',sans-serif;text-align:center;overflow:hidden;
+background:linear-gradient(120deg,#ff758c,#ff7eb3);}
+h1 {color:white;text-shadow:0 0 10px #ff2f6d;cursor:pointer;}
+#timer {color:white;font-size:14px;margin-bottom:6px;}
+#score {color:white;font-size:18px;margin-bottom:6px;}
+#game {width:360px;height:520px;background:rgba(255,255,255,.95);margin:auto;
+border-radius:20px;position:relative;overflow:hidden;}
+#player {width:90px;height:40px;background:linear-gradient(45deg,#ff416c,#ff4b2b);
+border-radius:30px;position:absolute;bottom:10px;left:135px;}
+.heart {position:absolute;font-size:26px;}
+#popup {position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;
+justify-content:center;align-items:center;z-index:10;}
+#popup div {background:white;padding:25px;border-radius:20px;width:300px;animation:pop .4s;}
+@keyframes pop {0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+button {background:#ff4d6d;border:none;padding:10px 20px;border-radius:20px;color:white;font-size:16px;cursor:pointer;}
+img {width:100%;border-radius:15px;}
+.firework {position:fixed;width:6px;height:6px;background:gold;border-radius:50%;animation:explode 1.2s linear infinite;}
+@keyframes explode {0%{transform:scale(1);opacity:1}100%{transform:scale(8);opacity:0}}
+</style>
+</head>
+<body>
+
+<h1>For My Edu ❤️</h1>
+<div id="timer"></div>
+<div id="score">Hearts: 0</div>
+<div id="game"><div id="player"></div></div>
+<div id="popup"><div id="popupContent"></div></div>
+
+<audio autoplay loop>
+<source src="https://www.bensound.com/bensound-music/bensound-love.mp3">
+</audio>
+
+<script>
+let score=0,x=135;
+const player=document.getElementById("player");
+const game=document.getElementById("game");
+const popup=document.getElementById("popup");
+const popupContent=document.getElementById("popupContent");
+const scoreEl=document.getElementById("score");
+
+const rewards={
+5:"Edu, your smile makes my worst days better 🥰",
+10:typeLoveLetter,
+15:showMap,
+20:showSlideshow,
+22:showBouquet,
+25:secretUnlock,
+30:finalProposal
+};
+
+// Movement
+document.addEventListener("keydown",e=>{
+if(e.key==="ArrowLeft"&&x>0)x-=25;
+if(e.key==="ArrowRight"&&x<270)x+=25;
+player.style.left=x+"px";
+});
+
+// Falling hearts
+function createHeart(){
+let h=document.createElement("div");
+h.className="heart"; h.innerHTML="❤️";
+h.style.left=Math.random()*330+"px"; h.style.top="0px";
+game.appendChild(h);
+let fall=setInterval(()=>{
+h.style.top=(parseInt(h.style.top)+4)+"px";
+let hr=h.getBoundingClientRect();
+let pr=player.getBoundingClientRect();
+if(hr.bottom>=pr.top&&hr.left>=pr.left&&hr.right<=pr.right){
+score++; scoreEl.innerHTML="Hearts: "+score;
+h.remove(); clearInterval(fall);
+if(rewards[score]) rewards[score]();
+}
+if(parseInt(h.style.top)>520){h.remove(); clearInterval(fall);}
+},20);
+}
+setInterval(createHeart,750);
+
+// Popup helper
+function showPopup(html){
+popupContent.innerHTML=html+"<br><br><button onclick='closePopup()'>Continue ❤️</button>";
+popup.style.display="flex";
+}
+function closePopup(){popup.style.display="none";}
+
+// Love letter
+function typeLoveLetter(){
+popup.style.display="flex";
+let text="Edu, since 24 September 2025, my life changed forever. From Circular Quay to Bobbin Head and every moment after, you became my happiest place. I choose you — today, tomorrow, always ❤️";
+let i=0;
+popupContent.innerHTML="<h3 id='type'></h3>";
+let typing=setInterval(()=>{
+document.getElementById("type").innerHTML+=text[i];
+i++; if(i>=text.length){clearInterval(typing);popupContent.innerHTML+="<br><br><button onclick='closePopup()'>Continue ❤️</button>";}
+},45);
+}
+
+// Map
+function showMap(){
+showPopup(`<h3>Where We First Met 📍</h3>
+<iframe width="100%" height="200" style="border-radius:15px"
+src="https://maps.google.com/maps?q=Sydney+Harbour+Circular+Quay&t=&z=14&output=embed"></iframe>`);
+}
+
+// Slideshow
+function showSlideshow(){
+showPopup(`<h3>Bobbin Head Memories 🚤</h3>
+<img id="slide" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">`);
+let imgs=[
+"https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+"https://photos.google.com/share/AF1QipM1MEWQcfimxhPCHYxjyeY4pl1AlFBXOqsfn97BhriV4pdeV2slF8vppvz3HHPkVA/photo/AF1QipPmWIYnZoS3DL9amylMesTD5I90rYHKxAUhMRUH?key=UHpSODJzeUcwS1dLUEx1WUpEdnpfendwdk5zNXJ3",
+"https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+];
+let i=0;
+setInterval(()=>{
+i=(i+1)%imgs.length;
+document.getElementById("slide").src=imgs[i];
+},1500);
+}
+
+// Virtual bouquet
+function showBouquet(){
+showPopup(`<h2>🌹 For My Edu 🌹</h2>
+<img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93">
+<p>These flowers will never fade — just like my love for you ❤️</p>`);
+}
+
+// Secret unlock
+function secretUnlock(){
+showPopup(`<h3>🔐 Secret Message</h3>
+<p>Password: <b>bobbin</b></p>
+<input id="pass" placeholder="Enter password">
+<br><br><button onclick="unlock()">Unlock ❤️</button>`);
+}
+function unlock(){
+let p=document.getElementById("pass").value.toLowerCase();
+if(p==="bobbin") showPopup("No matter where life takes us, Edu, I choose you forever 💖");
+else alert("Wrong 😜 Try again!");
+}
+
+// Final proposal
+function finalProposal(){
+fireworks();
+showPopup(`<h2>💍 Edu ❤️</h2>
+<p>From Circular Quay to Bobbin Head,<br>
+from our first laugh to forever...<br><br>
+Will you be my Valentine —<br>
+today, tomorrow, and always? 💖</p>`);
+}
+
+// Fireworks
+function fireworks(){
+for(let i=0;i<40;i++){
+let f=document.createElement("div");
+f.className="firework";
+f.style.left=Math.random()*100+"vw";
+f.style.top=Math.random()*100+"vh";
+document.body.appendChild(f);
+setTimeout(()=>f.remove(),1200);
+}
+}
+
+// Relationship timer
+function updateTimer(){
+const start=new Date("2025-09-24T00:00:00");
+const now=new Date();
+const diff=now-start;
+const days=Math.floor(diff/(1000*60*60*24));
+const hours=Math.floor((diff/(1000*60*60))%24);
+const mins=Math.floor((diff/(1000*60))%60);
+document.getElementById("timer").innerHTML=`Together: ${days} days ${hours} hrs ${mins} mins ❤️`;
+}
+setInterval(updateTimer,1000);
+updateTimer();
+
+// Hidden easter egg
+let clicks=0;
+document.querySelector("h1").onclick=()=>{
+clicks++;
+if(clicks===7){
+showPopup("💖 Surprise 💖<br>Edu, you are my once in a lifetime. I’d choose you in every universe. 🌍❤️");
+}
+};
+</script>
+</body>
+</html>
