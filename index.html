@@ -158,6 +158,18 @@ iframe {width:100%;height:200px;border-radius:15px;}
 </audio>
 
 <script>
+
+const audio = document.querySelector("audio");
+
+// Play on first user interaction
+function playAudioOnce() {
+    audio.play().catch(e => console.log(e)); // catch autoplay errors
+    document.removeEventListener("touchstart", playAudioOnce);
+    document.removeEventListener("click", playAudioOnce);
+}
+
+document.addEventListener("touchstart", playAudioOnce, {once:true});
+document.addEventListener("click", playAudioOnce, {once:true});
 let score=0;
 let leftPercent=40;
 const player=document.getElementById("player");
@@ -256,11 +268,10 @@ function showMap(){
 // Slideshow
 function showSlideshow(){
   showPopup(`<h3>Bobbin Head Memories 🚤</h3>
-  <img id="slide" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">`);
+  <img id="slide" src="img1 (1).JPEG">`);
   let imgs=[
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+   "img1 (2).JPEG", "img1 (3).JPEG","img1 (4).JPEG","img1 (5).JPEG","img1 (6).JPEG",
+  "img1 (7).JPEG"
   ];
   let i=0;
   setInterval(()=>{
