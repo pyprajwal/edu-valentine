@@ -62,7 +62,7 @@ h1 {
   position:absolute;
   bottom:2%;
   left:40%;
-  transition:left 0.05s linear; /* smoother for long press */
+  transition:left 0.05s linear; /* smooth for long press */
 }
 
 /* Tap Buttons */
@@ -73,8 +73,8 @@ h1 {
   margin-bottom:15px;
 }
 #controls button {
-  font-size:7vw;       /* bigger buttons */
-  padding:15px 25px;   /* bigger touch area */
+  font-size:7vw;
+  padding:15px 25px;
   border-radius:25px;
   background:#ff4d6d;
   border:none;
@@ -89,7 +89,6 @@ h1 {
 .heart {
   position:absolute;
   font-size:5vw;
-  max-font-size:26px;
 }
 
 /* Popup modal */
@@ -153,23 +152,32 @@ iframe {width:100%;height:200px;border-radius:15px;}
 
 <div id="popup"><div id="popupContent"></div></div>
 
-<audio autoplay loop>
-<source src="https://www.bensound.com/bensound-music/bensound-love.mp3">
+<audio id="bgAudio" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
 </audio>
 
 <script>
+const audio = document.getElementById("bgAudio");
 
-const audio = document.querySelector("audio");
-
-// Play on first user interaction
+// Function to play audio once after first user interaction
 function playAudioOnce() {
-    audio.play().catch(e => console.log(e)); // catch autoplay errors
+    // Unmute and play
+    audio.muted = false;
+    audio.play().catch(e => console.log("Audio play failed:", e));
+    
+    // Remove event listeners after first interaction
     document.removeEventListener("touchstart", playAudioOnce);
     document.removeEventListener("click", playAudioOnce);
 }
 
+// Listen for first tap/click anywhere on the page
 document.addEventListener("touchstart", playAudioOnce, {once:true});
 document.addEventListener("click", playAudioOnce, {once:true});
+
+// Optional: mute initially so autoplay won't be blocked
+audio.muted = true;
+audio.play().catch(e => console.log("Initial muted autoplay failed:", e));
+
 let score=0;
 let leftPercent=40;
 const player=document.getElementById("player");
@@ -193,21 +201,13 @@ let moveInterval = null;
 function startMove(direction){
   stopMove();
   moveInterval = setInterval(()=>{
-    if(direction==="left"){
-      leftPercent -= 1;
-      if(leftPercent<0) leftPercent=0;
-    } else if(direction==="right"){
-      leftPercent +=1;
-      if(leftPercent>80) leftPercent=80;
-    }
+    if(direction==="left"){ leftPercent -= 1; if(leftPercent<0) leftPercent=0; }
+    else if(direction==="right"){ leftPercent +=1; if(leftPercent>80) leftPercent=80; }
     player.style.left = leftPercent + "%";
-  },15); // smooth continuous move
+  },15);
 }
-function stopMove(){
-  if(moveInterval) clearInterval(moveInterval);
-}
+function stopMove(){ if(moveInterval) clearInterval(moveInterval); }
 
-// Buttons event listeners
 document.getElementById("leftBtn").addEventListener("touchstart",()=>startMove("left"));
 document.getElementById("leftBtn").addEventListener("touchend",stopMove);
 document.getElementById("leftBtn").addEventListener("mousedown",()=>startMove("left"));
@@ -237,26 +237,21 @@ function createHeart(){
     if(parseFloat(h.style.top)>100){h.remove(); clearInterval(fall);}
   },20);
 }
-setInterval(createHeart,750);
+let heartInterval = setInterval(createHeart, 750);
 
 // Popup
 function showPopup(html){
-  popupContent.innerHTML=html+"<br><br><button onclick='closePopup()'>Continue ❤️</button>";
-  popup.style.display="flex";
+  popupContent.innerHTML = html + `<br><br><button onclick="closePopup()">Continue ❤️</button>`;
+  popup.style.display = "flex";
 }
-function closePopup(){popup.style.display="none";}
+
+function closePopup(){
+  popup.style.display = "none";
+}
 
 // Love letter
 function typeLoveLetter(){
-  popup.style.display="flex";
-  let text="Edu, since 24 September 2025, my life changed forever. From Circular Quay to Bobbin Head and every moment after, you became my happiest place. I choose you — today, tomorrow, always ❤️";
-  let i=0;
-  popupContent.innerHTML="<h3 id='type'></h3>";
-  let typing=setInterval(()=>{
-    document.getElementById("type").innerHTML+=text[i];
-    i++; 
-    if(i>=text.length){clearInterval(typing);popupContent.innerHTML+="<br><br><button onclick='closePopup()'>Continue ❤️</button>";}
-  },45);
+  showPopup(`<h3>Edu, since 24 September 2025, my life changed forever. From Circular Quay to Bobbin Head and every moment after, you became my happiest place. I choose you — today, tomorrow, always ❤️</h3>`);
 }
 
 // Map
@@ -267,49 +262,39 @@ function showMap(){
 
 // Slideshow
 function showSlideshow(){
-  showPopup(`<h3>Bobbin Head Memories 🚤</h3>
+  showPopup(`<h3> Memories 🚤</h3>
   <img id="slide" src="img1 (1).JPEG">`);
   let imgs=[
    "img1 (2).JPEG", "img1 (3).JPEG","img1 (4).JPEG","img1 (5).JPEG","img1 (6).JPEG",
   "img1 (7).JPEG"
-  ];
-  let i=0;
-  setInterval(()=>{
-    i=(i+1)%imgs.length;
-    document.getElementById("slide").src=imgs[i];
+  ];  let i=0;
+  let slideInterval = setInterval(()=>{
+    let slide = document.getElementById("slide");
+    if(!slide) { clearInterval(slideInterval); return; } // stop if popup closed
+    i = (i+1) % imgs.length;
+    slide.src = imgs[i];
   },1500);
 }
 
 // Bouquet
 function showBouquet(){
   showPopup(`<h2>🌹 For My Edu 🌹</h2>
-  <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93">
+  <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80">
   <p>These flowers will never fade — just like my love for you ❤️</p>`);
 }
-
 // Secret
 function secretUnlock(){
   showPopup(`<h3>🔐 Secret Message</h3>
-  <p>Password: <b>bobbin</b></p>
+  <p>Password: <b> guess gara ;) </b></p>
   <input id="pass" placeholder="Enter password">
   <br><br><button onclick="unlock()">Unlock ❤️</button>`);
 }
+
 function unlock(){
   let p=document.getElementById("pass").value.toLowerCase();
-  if(p==="bobbin") showPopup("No matter where life takes us, Edu, I choose you forever 💖");
+  if(p==="emaya!") showPopup("<h3>No matter where life takes us, Edu, I choose you forever 💖</h3>");
   else alert("Wrong 😜 Try again!");
 }
-
-// Final proposal
-function finalProposal(){
-  fireworks();
-  showPopup(`<h2>💍 Edu ❤️</h2>
-  <p>From Circular Quay to Bobbin Head,<br>
-  from our first laugh to forever...<br><br>
-  Will you be my Valentine —<br>
-  today, tomorrow, and always? 💖</p>`);
-}
-
 // Fireworks
 function fireworks(){
   for(let i=0;i<40;i++){
@@ -317,9 +302,38 @@ function fireworks(){
     f.className="firework";
     f.style.left=Math.random()*100+"vw";
     f.style.top=Math.random()*100+"vh";
+    f.style.zIndex=9999;
     document.body.appendChild(f);
     setTimeout(()=>f.remove(),1200);
   }
+}
+
+// Final Proposal with YES button & 1 min firework
+function finalProposal(){
+  clearInterval(heartInterval);
+  stopMove();
+  document.getElementById("leftBtn").disabled=true;
+  document.getElementById("rightBtn").disabled=true;
+  document.getElementById("game").style.display="none";
+  document.getElementById("controls").style.display="none";
+  
+  showPopup(`<h2>💍 Edu ❤️</h2>
+  <p>From Circular Quay to Bobbin Head,<br>from our first laugh to forever...<br><br>
+  Will you be my Valentine —<br>today, tomorrow, and always? 💖</p>
+  <button onclick="yesCelebrate()">YES ❤️</button>`);
+  
+  let fireworkInterval = setInterval(fireworks,500);
+  setTimeout(()=>{ clearInterval(fireworkInterval); location.reload(); },60000);
+}
+
+function yesCelebrate(){
+  showPopup(`<h1>❤️ YES! ❤️</h1>
+  <p>Edu, I love you forever! 🎉🎆</p>`);
+  startFireworksForever();
+}
+
+function startFireworksForever(){
+  setInterval(fireworks,500);
 }
 
 // Timer
@@ -334,15 +348,6 @@ function updateTimer(){
 }
 setInterval(updateTimer,1000);
 updateTimer();
-
-// Hidden easter egg
-let clicks=0;
-document.querySelector("h1").onclick=()=>{
-  clicks++;
-  if(clicks===7){
-    showPopup("💖 Surprise 💖<br>Edu, you are my once in a lifetime. I’d choose you in every universe. 🌍❤️");
-  }
-};
 </script>
 </body>
 </html>
