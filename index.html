@@ -188,12 +188,12 @@ const scoreEl=document.getElementById("score");
 
 const rewards={
 5:"Edu, your smile makes my worst days better 🥰",
-10:typeLoveLetter,
-15:showMap,
-20:showSlideshow,
-22:showBouquet,
-25:secretUnlock,
-30:finalProposal
+20:typeLoveLetter,
+25:showMap,
+35:showSlideshow,
+45:showBouquet,
+60:secretUnlock,
+80:finalProposal
 };
 
 // Long press movement
@@ -251,7 +251,7 @@ function closePopup(){
 
 // Love letter
 function typeLoveLetter(){
-  showPopup(`<h3>Edu, since 24 September 2025, my life changed forever. From Circular Quay to Bobbin Head and every moment after, you became my happiest place. I choose you — today, tomorrow, always ❤️</h3>`);
+  showPopup(`<h3>Edu, since 15 September 2025, my life changed forever. From Circular Quay to Bobbin Head and every moment after, you became my happiest place. I choose you — today, tomorrow, always ❤️</h3>`);
 }
 
 // Map
@@ -338,7 +338,7 @@ function startFireworksForever(){
 
 // Timer
 function updateTimer(){
-  const start=new Date("2025-09-24T00:00:00");
+  const start=new Date("2025-09-15T00:00:00");
   const now=new Date();
   const diff=now-start;
   const days=Math.floor(diff/(1000*60*60*24));
